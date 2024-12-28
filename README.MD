@@ -4,7 +4,7 @@ This web application is a multifunctional clock that includes a clock, stopwatch
 
 # How to use it?
 
-Follow the link to use it: https://sunblast2255.github.io/Clock/
+Follow the link to use it: https://snblst2255.github.io/Clock/
 
 - **Watch**: Displays the current time and date.
 - **Secondometer**: Allows the user to track time with the ability to record laps.
