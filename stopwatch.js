@@ -1,122 +1,62 @@
-let isRunningStopwatch = false;
-let intervalStopwatch;
-let startTime, elapsedTime = 0;
+export default class StopWatch {
 
-let lastLapTime = 0;
-let lapCount = 0;
-
-function updateStopwatch() {
-    const now = new Date().getTime();
-    elapsedTime = now - startTime;
-
-    const ms = Math.floor((elapsedTime % 1000) / 10); 
-    const sec = Math.floor((elapsedTime / 1000) % 60);
-    const min = Math.floor((elapsedTime / (1000 * 60)) % 60);
-    const hour = Math.floor((elapsedTime / (1000 * 60 * 60)) % 24);
-
-    document.getElementById("stopwatch-display").innerHTML = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
-}
-
-function resetStopwatch() {
+    isRunningStopwatch = false;
+    intervalStopwatch;
+    startTime = 0;
     elapsedTime = 0;
+
     lastLapTime = 0;
     lapCount = 0;
-    isRunningStopwatch = false;
-}
 
-function addLap() {
-    const now = new Date().getTime();
-    const lapTime = now - startTime - lastLapTime;
-
-    const ms = Math.floor((lapTime % 1000) / 10);
-    const sec = Math.floor((lapTime / 1000) % 60);
-    const min = Math.floor((lapTime / (1000 * 60)) % 60);
-    const hour = Math.floor((lapTime / (1000 * 60 * 60)) % 24);
-
-    lastLapTime += lapTime;
-
-    const formattedLapTime = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
-    const overallTime = `${Math.floor((elapsedTime / (1000 * 60 * 60)) % 24).toString().padStart(2, '0')}:${Math.floor((elapsedTime / (1000 * 60)) % 60).toString().padStart(2, '0')}:${Math.floor((elapsedTime / 1000) % 60).toString().padStart(2, '0')}.${Math.floor((elapsedTime % 1000) / 10).toString().padStart(2, '0')}`;
-
-    updateLapList(formattedLapTime, overallTime);
-}
-
-function updateLapList(formattedLapTime, overallTime) {
-    const lapList = document.getElementById("lap-list");
-
-    if (lapCount == 0) {
-        lapList.innerHTML = "";
+    start() {
+        this.isRunningStopwatch = true;
+        this.startTime = new Date().getTime() - this.elapsedTime;
     }
 
-    lapCount++;
+    getTime() {
+        const now = new Date().getTime();
+        this.elapsedTime = now - this.startTime;
 
-    let listItem = document.createElement("div");
-    listItem.classList.add("lap-list-item");
+        const ms = Math.floor((this.elapsedTime % 1000) / 10);
+        const sec = Math.floor((this.elapsedTime / 1000) % 60);
+        const min = Math.floor((this.elapsedTime / (1000 * 60)) % 60);
+        const hour = Math.floor((this.elapsedTime / (1000 * 60 * 60)) % 24);
 
-    let lapCountSpan = document.createElement("span");
-    lapCountSpan.innerHTML = `${lapCount}`;
-    listItem.appendChild(lapCountSpan);
-
-    let lapTimeSpan = document.createElement("span");
-    lapTimeSpan.innerHTML = formattedLapTime;
-    listItem.appendChild(lapTimeSpan);
-
-    let overallTimeSpan = document.createElement("span");
-    overallTimeSpan.innerHTML = overallTime;
-    listItem.appendChild(overallTimeSpan);
-
-    lapList.appendChild(listItem);
-}
-
-function clearLapList() {
-    const lapList = document.getElementById("lap-list");
-    lapList.innerHTML = "";
-
-    let span = document.createElement("span");
-    span.innerHTML = "Laps will appear here";
-    
-    lapList.appendChild(span);
-}
-
-document.getElementById("start-stop-stopwatch").addEventListener("click", function (e) {
-    const lapBtn = document.getElementById("lap-stopwatch");
-
-    if (!isRunningStopwatch) {
-        e.target.innerHTML = "Stop";
-        isRunningStopwatch = true;
-        startTime = new Date().getTime() - elapsedTime;
-
-        lapBtn.classList.remove("disabled");
-        lapBtn.disabled = false;
-
-        intervalStopwatch = setInterval(function () {
-            updateStopwatch();
-        }, 10);
-
-    } else {
-        e.target.innerHTML = "Start";
-        isRunningStopwatch = false;
-        clearInterval(intervalStopwatch);
-
-        lapBtn.classList.add("disabled");
-        lapBtn.disabled = true;
+        const time = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+        return time;
     }
-});
 
-document.getElementById("reset-stopwatch").addEventListener("click", function () {
-    const lapBtn = document.getElementById("lap-stopwatch");
+    reset() {
+        this.elapsedTime = 0;
+        this.lastLapTime = 0;
+        this.lapCount = 0;
+        this.isRunningStopwatch = false;
+    }
 
-    document.getElementById("stopwatch-display").innerHTML = "00:00:00.00";
-    document.getElementById("start-stop-stopwatch").innerHTML = "Start";
+    pause() {
+        this.isRunningStopwatch = false;
+    }
 
-    lapBtn.classList.add("disabled");
-    lapBtn.disabled = true;
+    addLap() {
+        const now = new Date().getTime();
+        const lapTime = now - this.startTime - this.lastLapTime;
 
-    clearInterval(intervalStopwatch);
-    resetStopwatch();
-    clearLapList();
-});
+        const ms = Math.floor((lapTime % 1000) / 10);
+        const sec = Math.floor((lapTime / 1000) % 60);
+        const min = Math.floor((lapTime / (1000 * 60)) % 60);
+        const hour = Math.floor((lapTime / (1000 * 60 * 60)) % 24);
 
-document.getElementById("lap-stopwatch").addEventListener("click", function () {
-    addLap();
-});
+        this.lastLapTime += lapTime;
+
+        const formattedLapTime = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+        const overallTime = `${Math.floor((this.elapsedTime / (1000 * 60 * 60)) % 24).toString().padStart(2, '0')}:${Math.floor((this.elapsedTime / (1000 * 60)) % 60).toString().padStart(2, '0')}:${Math.floor((this.elapsedTime / 1000) % 60).toString().padStart(2, '0')}.${Math.floor((this.elapsedTime % 1000) / 10).toString().padStart(2, '0')}`;
+
+        this.lapCount++;
+
+        return {
+            lapTime: formattedLapTime,
+            overall: overallTime,
+            laps: this.lapCount,
+        };
+    }
+}
